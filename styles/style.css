@@ -1,0 +1,24 @@
+:root{
+
+}
+body{
+
+}
+.board{
+    display:grid;
+    grid-template:repeat(3,100px) / repeat(3,100px);
+    position:relative;
+}
+.grid{
+    border: 1px solid black;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    /* place-self: center; */
+}
+.grid:hover{
+    transform: scale(1.2);
+    background-color: white;
+    cursor: pointer;
+}

@@ -75,7 +75,7 @@ const gameBoard = (function() {
         //console.log(_diagDown,_diagUp); testing
     }
 
-    // input return coordinates and player won
+    // input return coordinates in an array and the player who won else return null
     function displayWin(){
 
     }
@@ -84,45 +84,58 @@ const gameBoard = (function() {
 })();
 
 
-
-
-
-
 //Control the game Module
 
-const displayController = (()=>{
-    
-
-    //init
+const gameController = (()=>{
+    let _gameNo = 0;
+    let _turn = 1;
+    function startGame(){
+        //init
      //best of 5?
-     let gameNo = 0;
-    gameBoard.resetBoard();
- 
+        gameBoard.resetBoard();
+
+        const grid = document.querySelector('.board');
+
+        grid.addEventListener('click',(e)=>{
+            console.log(e.target.id);//testing
+            render(e.target.id.toString());
+            gameBoard.checkWin(_whoseTurnIsIt())
+            _turn++;
+        })
+    }
 
     // Rules of the game: 3 symbols in a row wins the game. 
 
     //Cannot place symbol on an occupied square.
-
-    //checkWin
-
     //render
-    return {
+    //whose turn is it? no input return player object
+    function _whoseTurnIsIt(){
+        return (_turn % 2 === 0 ) ? player2 : player1;
+    }
 
+
+    function render(id){
+        let i = id[1];
+        let j = id[2];
+        gameBoard.addSymbol(i,j,_whoseTurnIsIt().getSymbol());
+        gameBoard.viewGameBoard();
+        const grid = document.querySelector("#g"+i+j);
+        grid.textContent = _whoseTurnIsIt().getSymbol();
+
+    }
+    return {startGame
     };
 })();
 
-// Object.create();
-
-// Testing ------------------
-
+// const Testing() {} ------------------
 
 let player1 = createPlayer('bob','X');
 let player2 = createPlayer('greg','O');
 
 gameBoard.resetBoard();
-gameBoard.addSymbol(0,2,player1.getSymbol());
+gameBoard.addSymbol(0,0,player1.getSymbol());
 
-gameBoard.addSymbol(1,2,player1.getSymbol());
+gameBoard.addSymbol(1,1,player1.getSymbol());
 
 gameBoard.addSymbol(2,2,player1.getSymbol());
 
@@ -131,3 +144,5 @@ gameBoard.checkWin(player1);
 gameBoard.viewGameBoard();
 player1.symbol = 'y';
 console.log(player1.getSymbol()); //Expect return 'X'
+
+gameController.startGame();
