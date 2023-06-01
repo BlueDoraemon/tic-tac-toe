@@ -2,7 +2,14 @@
 
 }
 body{
+margin:0;
+padding:0;
+}
 
+main{
+
+    display:flex;
+    
 }
 .board{
     display:grid;
@@ -15,10 +22,26 @@ body{
     justify-content: center;
     align-items: center;
     font-size: 5rem;
-    /* place-self: center; */
 }
 .grid:hover{
     transform: scale(1.2);
     background-color: white;
     cursor: pointer;
+    position:relative;
 }
+
+.shake{
+    animation-name: shakeAnim;
+    animation-duration: 5s;
+}
+
+@keyframes shakeAnim {
+    0% {left: 0}
+    1% {left: -3px}
+    2% {left: 5px}
+    3% {left: -8px}
+    4% {left: 8px}
+    5% {left: -5px}
+    6% {left: 3px}
+    7% {left: 0}
+  }

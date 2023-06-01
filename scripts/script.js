@@ -97,7 +97,10 @@ const gameController = (()=>{
         const grid = document.querySelector('.board');
 
         grid.addEventListener('click',(e)=>{
-            console.log(e.target.id);//testing
+            if (e.target.textContent !== '')  {
+                e.target.classList.toggle('shake');
+                return;
+            };
             render(e.target.id.toString());
             gameBoard.checkWin(_whoseTurnIsIt())
             _turn++;
@@ -117,14 +120,13 @@ const gameController = (()=>{
     function render(id){
         let i = id[1];
         let j = id[2];
-        gameBoard.addSymbol(i,j,_whoseTurnIsIt().getSymbol());
+        gameBoard.addSymbol(j,i,_whoseTurnIsIt().getSymbol());
         gameBoard.viewGameBoard();
         const grid = document.querySelector("#g"+i+j);
         grid.textContent = _whoseTurnIsIt().getSymbol();
 
     }
-    return {startGame
-    };
+    return {startGame};
 })();
 
 // const Testing() {} ------------------
