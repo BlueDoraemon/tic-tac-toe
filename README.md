@@ -10,6 +10,7 @@ Tic Tac Toe in browser WIP
 4. HTML
 5. render the contents of the gameboard array to the webpage (for now you can just manually fill in the array with "X"s and "O"s)
 6. functions that allow players to add marks to a specific spot on the board,  (Render them)
+
 7. Clean up the interface to allow players to put in their names, include a button to start/restart the game and add a display element that congratulates the winning player!
 8. Optional - If you’re feeling ambitious create an AI so that a player can play against the computer!
 Start by just getting the computer to make a random legal move.
