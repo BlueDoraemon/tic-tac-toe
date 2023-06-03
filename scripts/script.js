@@ -131,8 +131,30 @@ const gameController = (()=>{
         grid.textContent = _whoseTurnIsIt().getSymbol();
 
     }
+    function _convertToNineChar(str){
+        if (str.length === 9) return str;
+        if (str.length > 9) return str.substr(0,9);
+        if (str.length < 9) {
+            str += 'XOXOXOXOX';
+            return str.substr(0,9);
+        }
+    }
     function _twoPlayers(){
-        console.log( 'TWO PLAYERS');  
+        console.log( 'TWO PLAYERS'); //testing 
+        const _name = document.querySelector('.playerCreate input');
+        _name.addEventListener('change',()=>{
+            console.log('TEST'); //testing
+            let _tokenNames = _name.value.toUpperCase();
+            //convert to a 9char string
+            _tokenNames = _convertToNineChar(_tokenNames);
+            //display as a grid of TOKENS to choose
+            for (let index = 0; index < 9; index++) {
+                const _gridNo = document.querySelector(`#p${(index+1)}.grid`);
+                console.log(_gridNo);
+                _gridNo.textContent = _tokenNames[index];
+            };
+                
+            })
     }
     function _ai(){
         console.log( 'AI');

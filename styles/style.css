@@ -67,9 +67,33 @@ padding:0;
   }
 .playerCreate{
     display:none;
-    flex-direction: center;
-    justify-content: center;
-
+    flex-direction: column;
+    align-items: center;
+    margin:100px;
+    gap:5vh;
+    text-align: center;
+}
+.playerCreate .in {
+    display:grid;
+    font-size: 1.4rem;
+    font-weight: 900;
+}
+.playerCreate input{
+    height: 50px;
+    font-size: 2rem;
+}
+.playerCreate .box{
+    display: grid;
+    grid-template: repeat(3, 100px) / repeat(3, 100px);
+}
+.playerCreate .next{
+    display:grid;
+    grid-template: 100px /repeat(4, 100px);
+}
+.next:hover {
+    transform: scale(1.2);
+    background-color: white;
+    cursor: pointer;
 }
 main{
     display:none; 
@@ -129,8 +153,4 @@ main{
 
 .show{
     display:flex;
-}
-
-.gui{
-
 }
