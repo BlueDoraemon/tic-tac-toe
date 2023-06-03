@@ -87,6 +87,11 @@ const gameBoard = (function() {
 //Control the game Module
 
 const gameController = (()=>{
+
+    const _loginScreen = document.querySelector('.login');
+    const _playerScreen = document.querySelector('.playerCreate');
+    const _mainScreen = document.querySelector('main');
+    const _result = document.querySelector('.results');
     let _gameNo = 0;
     let _turn = 1;
     function startGame(){
@@ -126,7 +131,31 @@ const gameController = (()=>{
         grid.textContent = _whoseTurnIsIt().getSymbol();
 
     }
-    return {startGame};
+    function _twoPlayers(){
+        console.log( 'TWO PLAYERS');  
+    }
+    function _ai(){
+        console.log( 'AI');
+    }
+    function init(){
+
+        function _hideLogin(e){
+            e.stopPropagation();
+            _loginScreen.classList.toggle('show');
+            _playerScreen.classList.toggle('show');
+        }
+        _loginScreen.addEventListener('click', (e)=>{
+            // console.log(e.target);
+            if (e.target.classList.contains("pl")){
+                _hideLogin(e);
+                _twoPlayers();
+            } else if (e.target.classList.contains("ai"))  {
+                _hideLogin(e);
+                _ai();
+            }   
+        })
+    }
+    return {init, startGame};
 })();
 
 // const Testing() {} ------------------
@@ -147,4 +176,4 @@ gameBoard.viewGameBoard();
 player1.symbol = 'y';
 console.log(player1.getSymbol()); //Expect return 'X'
 
-gameController.startGame();
+gameController.init();

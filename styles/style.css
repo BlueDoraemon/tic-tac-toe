@@ -7,9 +7,72 @@ margin:0;
 padding:0;
 }
 
-main{
+.login{
+    display:none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:5vh;
+    height: 100%;
+    width:100%;
+    margin: 100px;
+}
+.title{
+    display:grid;
+    grid-template:repeat(3,100px) / repeat(5, 100px) ;
+    grid-template-areas:
+    "a b c . . "
+    ". d e f . "
+    ". . g h i ";
+}
+.title > .t1 {
+    grid-area: a;
+}
+.title > .t2 {
+    grid-area: b;
+}
+.title > .t3 {
+    grid-area: c;
+}
+.title > .t4 {
+    grid-area: d;
+}
+.title > .t5 {
+    grid-area: e;
+}
+.title > .t6 {
+    grid-area: f;
+}
+.title > .t7 {
+    grid-area: g;
+}
+.title > .t8 {
+    grid-area: h;
+}
+.title > .t9 {
+    grid-area: i;
+}
+.players{
+    display:grid;
+    grid-template: 100px / repeat(8, 100px);
+}
+.ai{
+    display:grid;
+    grid-template: 100px / repeat(2, 100px);
+}
+.login > div:not(:first-child):hover {
+    transform: scale(1.2);
+    background-color: white;
+    cursor: pointer;
+  }
+.playerCreate{
+    display:none;
+    flex-direction: center;
+    justify-content: center;
 
-    display:flex;
+}
+main{
+    display:none; 
     justify-content: center;
     align-items: center;
     background-color: var(--white);
@@ -27,13 +90,16 @@ main{
     align-items: center;
     font-size: 5rem;
 }
-.grid:hover{
+.board > .grid:hover{
     transform: scale(1.2);
     background-color: white;
     cursor: pointer;
     /* position:relative; */
 }
 
+.hide{
+    display:none;
+}
 .shake{
     animation-name: shakeAnim;
     animation-duration: 5s;
@@ -61,10 +127,10 @@ main{
     background-image: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.2));
 }
 
-.result.show{
+.show{
     display:flex;
 }
 
 .gui{
-    
+
 }
