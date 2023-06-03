@@ -94,6 +94,7 @@ const gameController = (()=>{
     const _result = document.querySelector('.results');
     let _gameNo = 0;
     let _turn = 1;
+    let players = [];
     function startGame(){
         //init
      //best of 5?
@@ -139,6 +140,9 @@ const gameController = (()=>{
             return str.substr(0,9);
         }
     }
+    function _checkIfTokenTaken(){
+
+    }
     function _twoPlayers(){
         console.log( 'TWO PLAYERS'); //testing 
         const _name = document.querySelector('.playerCreate input');
@@ -149,12 +153,24 @@ const gameController = (()=>{
             _tokenNames = _convertToNineChar(_tokenNames);
             //display as a grid of TOKENS to choose
             for (let index = 0; index < 9; index++) {
-                const _gridNo = document.querySelector(`#p${(index+1)}.grid`);
+                const _gridNo = document.querySelector(`#p${(index+1)}.grid`);//couldnt be bothered rewrapping
                 console.log(_gridNo);
                 _gridNo.textContent = _tokenNames[index];
             };
-                
-            })
+        })
+        const _tokenGrid = document.querySelector('.box');
+        let _old = null; 
+        _tokenGrid.addEventListener('click',(e)=>{
+            let _playerToken = e.target.textContent;
+            if (_old !== null) _old.classList.toggle('stuck');
+            e.target.classList.toggle('stuck');
+            _old = e.target;
+        })
+
+        if (players.length < 2) _rePlayerCreate();
+    }
+    function _rePlayerCreate(){
+ 
     }
     function _ai(){
         console.log( 'AI');

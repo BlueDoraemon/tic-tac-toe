@@ -7,6 +7,12 @@ margin:0;
 padding:0;
 }
 
+
+/* 
+--------------LOGIN ------------
+--------------- */
+
+
 .login{
     display:none;
     flex-direction: column;
@@ -65,6 +71,12 @@ padding:0;
     background-color: white;
     cursor: pointer;
   }
+
+
+  /* PLAYER CREATE --------------- */
+  /* ------------ */
+
+
 .playerCreate{
     display:none;
     flex-direction: column;
@@ -86,6 +98,18 @@ padding:0;
     display: grid;
     grid-template: repeat(3, 100px) / repeat(3, 100px);
 }
+
+.playerCreate .box .grid:hover{
+    transform: scale(1.2);
+    background-color: white;
+    cursor: pointer;
+}
+.box .stuck{
+    transform: scale(1.2);
+    background-color: white;
+    border: 3.5px solid black;
+}
+
 .playerCreate .next{
     display:grid;
     grid-template: 100px /repeat(4, 100px);
@@ -95,6 +119,12 @@ padding:0;
     background-color: white;
     cursor: pointer;
 }
+/* 
+
+MAIN GAMEBOARD -------------
+---------
+----------- */
+
 main{
     display:none; 
     justify-content: center;
@@ -120,6 +150,12 @@ main{
     cursor: pointer;
     /* position:relative; */
 }
+
+
+/* 
+MISC---------------------------
+----------
+----------- */
 
 .hide{
     display:none;
@@ -148,7 +184,7 @@ main{
     left:0;
     width: 100%;
     height:100%;
-    background-image: linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.2));
+    background-color: rgba(0,0,0,0.5);
 }
 
 .show{
