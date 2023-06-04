@@ -132,21 +132,36 @@ const gameController = (()=>{
         grid.textContent = _whoseTurnIsIt().getSymbol();
 
     }
-    function _convertToNineChar(str){
-        if (str.length === 9) return str;
-        if (str.length > 9) return str.substr(0,9);
-        if (str.length < 9) {
-            str += 'XOXOXOXOX';
-            return str.substr(0,9);
-        }
-    }
-    function _checkIfTokenTaken(){
 
-    }
+
     function _twoPlayers(){
         console.log( 'TWO PLAYERS'); //testing 
+        _playerUI();
+        if (players.length < 2) _rePlayerCreate();
+    }
+    function _playerUI(){
+        let _playerName = "";
+        let _token = null;
+        function _convertToNineChar(str){ //no used tokens
+            function _checkIfTokenTaken(str){
+                if (players.length === 0) return str;
+                players.forEach((e)=>{
+                    return (e.getSymbol() === 'X') ? str.replaceAll('X','O') : str.replaceAll(e.getSymbol(), 'X');
+                })
+            }
+            
+            if (str.length === 9) return _checkIfTokenTaken(str);
+            if (str.length > 9) return _checkIfTokenTaken(str).substr(0,9);
+            if (str.length < 9) {
+                str += 'XOXOXOXOXOX';
+                return _checkIfTokenTaken(str).substr(0,9);
+            }
+        }
         const _name = document.querySelector('.playerCreate input');
+ 
         _name.addEventListener('change',()=>{
+            _playerName = _name.value;
+
             console.log('TEST'); //testing
             let _tokenNames = _name.value.toUpperCase();
             //convert to a 9char string
@@ -154,20 +169,33 @@ const gameController = (()=>{
             //display as a grid of TOKENS to choose
             for (let index = 0; index < 9; index++) {
                 const _gridNo = document.querySelector(`#p${(index+1)}.grid`);//couldnt be bothered rewrapping
-                console.log(_gridNo);
                 _gridNo.textContent = _tokenNames[index];
             };
         })
+
         const _tokenGrid = document.querySelector('.box');
         let _old = null; 
+
         _tokenGrid.addEventListener('click',(e)=>{
             let _playerToken = e.target.textContent;
             if (_old !== null) _old.classList.toggle('stuck');
             e.target.classList.toggle('stuck');
             _old = e.target;
+            _token = e.target.textContent;
         })
+        const _next = document.querySelector('.next');
+        _next.addEventListener('click', (e)=>{
 
-        if (players.length < 2) _rePlayerCreate();
+            if (_playerName === "" || _token === null){
+                _next.classList.toggle('shake');
+                const _span = document.querySelector('#nextspan');
+                _span.textContent = (_playerName.value === "") ? "Please add a name" : "Choose a token";
+            } else { 
+                _next.classList.toggle('confirm'); // make confirm class
+                players.push(createPlayer(_playerName, _token));
+                console.log(players[players.length-1].getName()); 
+            }
+        })
     }
     function _rePlayerCreate(){
  

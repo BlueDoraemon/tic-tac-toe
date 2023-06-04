@@ -119,6 +119,11 @@ padding:0;
     background-color: white;
     cursor: pointer;
 }
+
+.cont{
+    gap:20vh;
+    text-align: end;
+}
 /* 
 
 MAIN GAMEBOARD -------------
