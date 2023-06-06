@@ -146,7 +146,7 @@ const gameController = (()=>{
         function _rePlayerCreate(){
             _playerName = "";
             _token = null;
-            _name.textContent = "";
+            _name.value = "";
             _old.classList.toggle('stuck');
             _next.classList.toggle('confirm');
             _span.textContent = "";
@@ -206,9 +206,11 @@ const gameController = (()=>{
                 _next.classList.toggle('confirm'); // make confirm class
                 players.push(createPlayer(_playerName, _token));
                 console.log(players[players.length-1].getSymbol()); 
+
+                createBox(); // next job
+                if (players.length < maxPlayers) _rePlayerCreate();
             }
         })
-        if (players.length < maxPlayers) _rePlayerCreate();
     }
 
     function _ai(){
