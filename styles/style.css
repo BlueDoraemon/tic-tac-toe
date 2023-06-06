@@ -58,7 +58,7 @@ padding:0;
 .title > .t9 {
     grid-area: i;
 }
-.players{
+.twoPlayers{
     display:grid;
     grid-template: 100px / repeat(8, 100px);
 }

@@ -133,31 +133,47 @@ const gameController = (()=>{
 
     }
 
-
-    function _twoPlayers(){
-        console.log( 'TWO PLAYERS'); //testing 
-        _playerUI();
-        if (players.length < 2) _rePlayerCreate();
-    }
-    function _playerUI(){
+    function _playerUI(maxPlayers,ai){ //maxPlayers two players = 2 ai boolean true or false
         let _playerName = "";
         let _token = null;
+        const _name = document.querySelector('.playerCreate input');
+        const _tokenGrid = document.querySelector('.box');
+        let _old = null; 
+        const _next = document.querySelector('.next');
+
+        const _span = document.querySelector('#nextspan');
+
+        function _rePlayerCreate(){
+            _playerName = "";
+            _token = null;
+            _name.textContent = "";
+            _old.classList.toggle('stuck');
+            _next.classList.toggle('confirm');
+            _span.textContent = "";
+        }
+
+
         function _convertToNineChar(str){ //no used tokens
             function _checkIfTokenTaken(str){
                 if (players.length === 0) return str;
-                players.forEach((e)=>{
-                    return (e.getSymbol() === 'X') ? str.replaceAll('X','O') : str.replaceAll(e.getSymbol(), 'X');
+                let newStr = "";
+                str.split("").forEach((e)=>{
+                    for (let index = 0; index < players.length; index++) {
+                        (players[index].getSymbol() === e) ?null : newStr += e;
+                    }
                 })
+                console.log(newStr);
+                return newStr;
             }
             
             if (str.length === 9) return _checkIfTokenTaken(str);
             if (str.length > 9) return _checkIfTokenTaken(str).substr(0,9);
             if (str.length < 9) {
-                str += 'XOXOXOXOXOX';
+                str += 'XOXOXOXOXOXOXOXO';
                 return _checkIfTokenTaken(str).substr(0,9);
             }
         }
-        const _name = document.querySelector('.playerCreate input');
+
  
         _name.addEventListener('change',()=>{
             _playerName = _name.value;
@@ -173,8 +189,6 @@ const gameController = (()=>{
             };
         })
 
-        const _tokenGrid = document.querySelector('.box');
-        let _old = null; 
 
         _tokenGrid.addEventListener('click',(e)=>{
             let _playerToken = e.target.textContent;
@@ -183,23 +197,20 @@ const gameController = (()=>{
             _old = e.target;
             _token = e.target.textContent;
         })
-        const _next = document.querySelector('.next');
         _next.addEventListener('click', (e)=>{
 
             if (_playerName === "" || _token === null){
                 _next.classList.toggle('shake');
-                const _span = document.querySelector('#nextspan');
                 _span.textContent = (_playerName.value === "") ? "Please add a name" : "Choose a token";
             } else { 
                 _next.classList.toggle('confirm'); // make confirm class
                 players.push(createPlayer(_playerName, _token));
-                console.log(players[players.length-1].getName()); 
+                console.log(players[players.length-1].getSymbol()); 
             }
         })
+        if (players.length < maxPlayers) _rePlayerCreate();
     }
-    function _rePlayerCreate(){
- 
-    }
+
     function _ai(){
         console.log( 'AI');
     }
@@ -214,10 +225,10 @@ const gameController = (()=>{
             // console.log(e.target);
             if (e.target.classList.contains("pl")){
                 _hideLogin(e);
-                _twoPlayers();
+                _playerUI(2,false);
             } else if (e.target.classList.contains("ai"))  {
                 _hideLogin(e);
-                _ai();
+                _playerUI(1,true);
             }   
         })
     }
