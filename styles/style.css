@@ -7,6 +7,9 @@ margin:0;
 padding:0;
 }
 
+.wrap{
+    display:flex;
+}
 
 /* 
 --------------LOGIN ------------
@@ -72,21 +75,39 @@ padding:0;
     cursor: pointer;
   }
 
+/* RIGHT side */
+.right{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10vh;
+    gap:10px;
+}
+.right > *{
+    border: 4px solid black;
+    width: 100px;
+    display:grid;
+    justify-items: center;
+    font-size:1.2rem;
+    font-weight: 800;
+    height: 100px;
+    gap:10px;
+
+}
+.right .symbol{
+    margin-top:-20px;
+    font-size: 2rem;
+    font-weight:1000;
+}
+
+
 
   /* PLAYER CREATE --------------- */
   /* ------------ */
 
 
-.playerCreate{
+.playerCreate {
     display:none;
-}
-
-.playerCreate .right{
-    display:flex;
-    flex-direction: column;
-}
-.playerCreate .left{
-    display:flex;
     flex-direction: column;
     align-items: center;
     margin:100px;

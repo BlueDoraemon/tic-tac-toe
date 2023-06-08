@@ -194,6 +194,19 @@ const gameController = (()=>{
 
         function _createBox(name, token){
             //create box that shows on the right side of the window with the name and symbol
+            const right = document.querySelector('.right');
+            const box = document.createElement("div");
+            const text = document.createElement("p");
+            const symbol = document.createElement('p');
+
+            symbol.classList.add('symbol');
+            text.textContent = name;
+            symbol.textContent = token;
+
+            box.appendChild(text);
+            box.appendChild(symbol);
+            right.appendChild(box);
+              
 
         }
         _tokenGrid.addEventListener('click',(e)=>{
