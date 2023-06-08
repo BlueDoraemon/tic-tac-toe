@@ -49,7 +49,7 @@ const gameBoard = (function() {
         //check rows
         for (let j = 0; j < _gameboard.length; j++){
             if (_gameboard[j].every(isSymbol)) {
-                console.log(`${player.getName()} has won this round; j = ${j}`)
+                gameController.results(`${player.getName()} has won this round; j = ${j}`)
             }
         }
         //check columns
@@ -59,17 +59,17 @@ const gameBoard = (function() {
 
         for (let i = 0; i < _gameboard.length; i++){
             if (_extractColumn(_gameboard,i).every(isSymbol)) {
-                console.log(`${player.getName()} has won this round; i = ${i}`)
+                gameController.results(`${player.getName()} has won this round; i = ${i}`)
             }
         }
         //check diagonals
         let _diagDown = [_gameboard[0][0],_gameboard[1][1],_gameboard[2][2]];
         let _diagUp = [_gameboard[2][0],_gameboard[1][1],_gameboard[0][2]];
         if (_diagDown.every(isSymbol)) {
-            console.log(`${player.getName()} has won this round; /`)
+            gameController.results(`${player.getName()} has won this round; /`)
         }
         if (_diagUp.every(isSymbol)) {
-            console.log(`${player.getName()} has won this round; diagDown`)
+            gameController.results(`${player.getName()} has won this round; diagDown`)
         }
 
         //console.log(_diagDown,_diagUp); testing
@@ -92,16 +92,23 @@ const gameController = (()=>{
     const _playerScreen = document.querySelector('.playerCreate');
     const _mainScreen = document.querySelector('main');
     const _result = document.querySelector('.results');
-    let _gameNo = 0;
     let _turn = 1;
     let players = [];
 
+    function _reset(){
+        gameBoard.resetBoard();
+        const grid = document.querySelectorAll(".grid");
+        grid.forEach((e)=>{
+            e.textContent = "";
+        })
+        _turn = 1;
+    }
 
     function startGame(){
         //init
      //best of 5?
 
-        gameBoard.resetBoard();
+        _reset();
         const _firstPlayerBox = document.querySelector('#box1');
         const _secondPlayerBox = document.querySelector("#box2");
         const _grid = document.querySelector('.board');
@@ -117,15 +124,25 @@ const gameController = (()=>{
             render(e.target.id.toString());
             gameBoard.checkWin(_whoseTurnIsIt())
             _turn++;
+            _firstPlayerBox.classList.toggle('scale');
+            _secondPlayerBox.classList.toggle('scale');
         })
     }
 
+    function results(string){
+        const _text = document.querySelector('#resultsText');
+        _result.classList.toggle('show');
+        _text.textContent = string;
+    }
     // Rules of the game: 3 symbols in a row wins the game. 
 
     //Cannot place symbol on an occupied square.
     //render
     //whose turn is it? no input return player object
-
+    function tryAgain(){
+        _result.classList.toggle('show');
+        _reset();
+    }
 
     function _whoseTurnIsIt(){
         return (_turn % 2 === 0 ) ? players[1] : players[0];
@@ -139,6 +156,7 @@ const gameController = (()=>{
         gameBoard.viewGameBoard();
         const grid = document.querySelector("#g"+i+j);
         grid.textContent = _whoseTurnIsIt().getSymbol();
+
 
     }
 
@@ -197,7 +215,7 @@ const gameController = (()=>{
             if (str.length === 9) return _checkIfTokenTaken(str);
             if (str.length > 9) return _checkIfTokenTaken(str).substr(0,9);
             if (str.length < 9) {
-                str += 'XOXOXOXOXOXOXOXO';
+                str += 'XOXOXOXOXOXOXOXOXOXO';
                 return _checkIfTokenTaken(str).substr(0,9);
             }
         }
@@ -268,7 +286,7 @@ const gameController = (()=>{
             }   
         })
     }
-    return {init, startGame};
+    return {init, startGame, results, home, tryAgain};
 })();
 
 // const Testing() {} ------------------
