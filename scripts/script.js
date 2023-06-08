@@ -45,11 +45,11 @@ const gameBoard = (function() {
 
         const isSymbol = (char) => char === player.getSymbol();
 
-
         //check rows
         for (let j = 0; j < _gameboard.length; j++){
             if (_gameboard[j].every(isSymbol)) {
-                gameController.results(`${player.getName()} has won this round; j = ${j}`)
+                gameController.results(`${player.getName()} has won this round; j = ${j}`);
+                return true;
             }
         }
         //check columns
@@ -59,19 +59,22 @@ const gameBoard = (function() {
 
         for (let i = 0; i < _gameboard.length; i++){
             if (_extractColumn(_gameboard,i).every(isSymbol)) {
-                gameController.results(`${player.getName()} has won this round; i = ${i}`)
+                gameController.results(`${player.getName()} has won this round; i = ${i}`);
+                return true;
             }
         }
         //check diagonals
         let _diagDown = [_gameboard[0][0],_gameboard[1][1],_gameboard[2][2]];
         let _diagUp = [_gameboard[2][0],_gameboard[1][1],_gameboard[0][2]];
         if (_diagDown.every(isSymbol)) {
-            gameController.results(`${player.getName()} has won this round; /`)
+            gameController.results(`${player.getName()} has won this round; /`);
+            return true;
         }
         if (_diagUp.every(isSymbol)) {
-            gameController.results(`${player.getName()} has won this round; diagDown`)
+            gameController.results(`${player.getName()} has won this round; diagDown`);
+            return true;
         }
-
+        return false;
         //console.log(_diagDown,_diagUp); testing
     }
 
@@ -101,8 +104,7 @@ const gameController = (()=>{
      //best of 5?
 
         _reset();
-        const _firstPlayerBox = document.querySelector('#box1');
-        const _secondPlayerBox = document.querySelector("#box2");
+
         const _grid = document.querySelector('.board');
 
         _grid.addEventListener('click',(e)=>{
@@ -111,10 +113,13 @@ const gameController = (()=>{
                 return;
             };
             render(e.target.id.toString());
-            gameBoard.checkWin(_whoseTurnIsIt())
-            _turn++;
-            _firstPlayerBox.classList.toggle('scale');
-            _secondPlayerBox.classList.toggle('scale');
+            if (gameBoard.checkWin(_whoseTurnIsIt())){}
+            else { 
+                _turn++;
+                (_turn >= 10) ? gameController.results(`It's a Draw`) : null ;
+            }
+            _scale();
+
         })
     }
 
@@ -133,25 +138,45 @@ const gameController = (()=>{
         _reset();
     }
     function home(){
+        _result.classList.toggle('show');
+        _mainScreen.classList.toggle('show');
+        _loginScreen.classList.toggle('show'); 
 
+        //remove all box elements
+        const allBoxes = document.querySelectorAll('.right > div')
+        const right = document.querySelector('.right');
+        allBoxes.forEach((e)=>{
+            right.removeChild(e);
+        })
+
+        _turn = 1;
+        players = [];
     }
 
     function _reset(){
         gameBoard.resetBoard();
-        const grid = document.querySelectorAll(".grid");
+        const grid = document.querySelectorAll("main .grid");
         grid.forEach((e)=>{
             e.textContent = "";
         })
         _turn = 1;
-        const right = document.querySelectorAll('.scale');
-        right.forEach((element)=>{
-            element.classList.toggle('scale');
-        })
-        const player1 = document.querySelector('#box1');
-        player1.classList.toggle('scale');
+        _scale();
 
     }
-
+    function _scale(){
+        const player1 = document.querySelector('#box1');
+        const player2 = document.querySelector("#box2");
+        if (_turn === 1){
+            const right = document.querySelectorAll('.scale');
+            right.forEach((element)=>{
+                element.classList.toggle('scale');
+            })
+            player1.classList.toggle('scale');
+        } else{
+            player1.classList.toggle('scale');
+            player2.classList.toggle('scale');
+        }
+    }
     function _whoseTurnIsIt(){
         return (_turn % 2 === 0 ) ? players[1] : players[0];
     }
@@ -173,18 +198,24 @@ const gameController = (()=>{
         let _token = null;
         const _name = document.querySelector('.playerCreate input');
         const _tokenGrid = document.querySelector('.box');
-        let _old = null; 
         const _next = document.querySelector('.next');
-
         const _span = document.querySelector('#nextspan');
+        
+        _rePlayerCreate();
 
         function _rePlayerCreate(){
             _playerName = "";
             _token = null;
             _name.value = "";
-            _old.classList.toggle('stuck');
-            _next.classList.toggle('confirm');
-            _old = null;
+            const confirmed = document.querySelectorAll('.confirm');
+            confirmed.forEach((e)=>{
+                e.classList.toggle('confirm');
+            })
+            const grid = document.querySelectorAll('.playerCreate .box .grid');
+            grid.forEach((e)=>{
+                e.textContent = "";
+            })
+            _unstuck();
             _span.textContent = "";
         }
 
@@ -219,20 +250,21 @@ const gameController = (()=>{
                 console.log(newStr);
                 return newStr;
             }
+
+            str += 'XOXOXOXOXOXOXOXOXOXO';
+            return _checkIfTokenTaken(str).substr(0,9);
             
-            if (str.length === 9) return _checkIfTokenTaken(str);
-            if (str.length > 9) return _checkIfTokenTaken(str).substr(0,9);
-            if (str.length < 9) {
-                str += 'XOXOXOXOXOXOXOXOXOXO';
-                return _checkIfTokenTaken(str).substr(0,9);
-            }
         }
 
+        function _unstuck(){
+            const stuckTokens = document.querySelectorAll('.stuck');
+            stuckTokens.forEach((e)=>{
+                e.classList.toggle('stuck');
+            });
+        }
  
         _name.addEventListener('change',()=>{ //on Name change
             _playerName = _name.value;
-
-            console.log('TEST'); //testing
             let _tokenNames = _name.value.toUpperCase();
             //convert to a 9char string
             _tokenNames = _convertToNineChar(_tokenNames);
@@ -241,36 +273,38 @@ const gameController = (()=>{
                 const _gridNo = document.querySelector(`#p${(index+1)}.grid`);//couldnt be bothered rewrapping
                 _gridNo.textContent = _tokenNames[index];
             };
+            _unstuck();
+            _token = null;
         })
 
 
         _tokenGrid.addEventListener('click',(e)=>{ //on click Grid for selecting tokens
-            let _playerToken = e.target.textContent;
-            if (_old !== null) _old.classList.toggle('stuck');
+            _unstuck();
             e.target.classList.toggle('stuck');
-            _old = e.target;
             _token = e.target.textContent;
         })
-        _next.addEventListener('click', (e)=>{ // on clicking next
+        function _nextF(e){// on clicking next
 
-            if (_playerName === "" || _token === null){
-                _next.classList.toggle('shake');
-                _span.textContent = (_playerName.value === "") ? "Please add a name" : "Choose a token";
-            } else { 
-                _next.classList.toggle('confirm'); // make confirm class
-                players.push(createPlayer(_playerName, _token));
-                console.log(players[players.length-1].getSymbol()); 
+                if (_playerName === "" || _token === null){
+                    _next.classList.toggle('shake');
+                    _span.textContent = (_playerName.value === "") ? "Please add a name" : "Choose a token";
+                } else { 
+                    _next.classList.toggle('confirm'); // make confirm class
+                    players.push(createPlayer(_playerName, _token));
+                    console.log(players[players.length-1].getSymbol()); 
+    
+                    _createBox(_playerName,_token);
+                    if (players.length < maxPlayers) _rePlayerCreate();
+                     else {_playerScreen.classList.toggle('show');
+                    _mainScreen.classList.toggle('show');
+                    startGame();
 
-                _createBox(_playerName,_token);
-                if (players.length < maxPlayers) _rePlayerCreate();
-                 else {_playerScreen.classList.toggle('show');
-                _mainScreen.classList.toggle('show');
-                startGame();
-                    }
+                     _next.removeEventListener('click',_nextF)
+                        }
+                }
+        }
+        _next.addEventListener('click',_nextF);
   
-
-            }
-        })
     }
 
     function _ai(){ //WIP
