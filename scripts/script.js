@@ -95,14 +95,6 @@ const gameController = (()=>{
     let _turn = 1;
     let players = [];
 
-    function _reset(){
-        gameBoard.resetBoard();
-        const grid = document.querySelectorAll(".grid");
-        grid.forEach((e)=>{
-            e.textContent = "";
-        })
-        _turn = 1;
-    }
 
     function startGame(){
         //init
@@ -112,9 +104,6 @@ const gameController = (()=>{
         const _firstPlayerBox = document.querySelector('#box1');
         const _secondPlayerBox = document.querySelector("#box2");
         const _grid = document.querySelector('.board');
-
-
-        _firstPlayerBox.classList.toggle('scale');
 
         _grid.addEventListener('click',(e)=>{
             if (e.target.textContent !== '')  {
@@ -142,6 +131,25 @@ const gameController = (()=>{
     function tryAgain(){
         _result.classList.toggle('show');
         _reset();
+    }
+    function home(){
+
+    }
+
+    function _reset(){
+        gameBoard.resetBoard();
+        const grid = document.querySelectorAll(".grid");
+        grid.forEach((e)=>{
+            e.textContent = "";
+        })
+        _turn = 1;
+        const right = document.querySelectorAll('.scale');
+        right.forEach((element)=>{
+            element.classList.toggle('scale');
+        })
+        const player1 = document.querySelector('#box1');
+        player1.classList.toggle('scale');
+
     }
 
     function _whoseTurnIsIt(){
