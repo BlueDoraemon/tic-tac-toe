@@ -79,6 +79,14 @@ padding:0;
 
 .playerCreate{
     display:none;
+}
+
+.playerCreate .right{
+    display:flex;
+    flex-direction: column;
+}
+.playerCreate .left{
+    display:flex;
     flex-direction: column;
     align-items: center;
     margin:100px;

@@ -118,6 +118,8 @@ const gameController = (()=>{
     //Cannot place symbol on an occupied square.
     //render
     //whose turn is it? no input return player object
+
+
     function _whoseTurnIsIt(){
         return (_turn % 2 === 0 ) ? player2 : player1;
     }
@@ -149,6 +151,7 @@ const gameController = (()=>{
             _name.value = "";
             _old.classList.toggle('stuck');
             _next.classList.toggle('confirm');
+            _old = null;
             _span.textContent = "";
         }
 
@@ -189,7 +192,10 @@ const gameController = (()=>{
             };
         })
 
+        function _createBox(name, token){
+            //create box that shows on the right side of the window with the name and symbol
 
+        }
         _tokenGrid.addEventListener('click',(e)=>{
             let _playerToken = e.target.textContent;
             if (_old !== null) _old.classList.toggle('stuck');
@@ -207,7 +213,7 @@ const gameController = (()=>{
                 players.push(createPlayer(_playerName, _token));
                 console.log(players[players.length-1].getSymbol()); 
 
-                createBox(); // next job
+                _createBox(_playerName,_token);
                 if (players.length < maxPlayers) _rePlayerCreate();
             }
         })
