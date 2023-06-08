@@ -95,14 +95,21 @@ const gameController = (()=>{
     let _gameNo = 0;
     let _turn = 1;
     let players = [];
+
+
     function startGame(){
         //init
      //best of 5?
+
         gameBoard.resetBoard();
+        const _firstPlayerBox = document.querySelector('#box1');
+        const _secondPlayerBox = document.querySelector("#box2");
+        const _grid = document.querySelector('.board');
 
-        const grid = document.querySelector('.board');
 
-        grid.addEventListener('click',(e)=>{
+        _firstPlayerBox.classList.toggle('scale');
+
+        _grid.addEventListener('click',(e)=>{
             if (e.target.textContent !== '')  {
                 e.target.classList.toggle('shake');
                 return;
@@ -121,7 +128,7 @@ const gameController = (()=>{
 
 
     function _whoseTurnIsIt(){
-        return (_turn % 2 === 0 ) ? player2 : player1;
+        return (_turn % 2 === 0 ) ? players[1] : players[0];
     }
 
 
@@ -155,6 +162,24 @@ const gameController = (()=>{
             _span.textContent = "";
         }
 
+        function _createBox(name, token){
+            //create box that shows on the right side of the window with the name and symbol
+            const right = document.querySelector('.right');
+            const box = document.createElement("div");
+            const text = document.createElement("p");
+            const symbol = document.createElement('p');
+            box.id = `box${players.length}`;
+
+            symbol.classList.add('symbol');
+            text.textContent = name;
+            symbol.textContent = token;
+
+            box.appendChild(text);
+            box.appendChild(symbol);
+            right.appendChild(box);
+              
+
+        }
 
         function _convertToNineChar(str){ //no used tokens
             function _checkIfTokenTaken(str){
@@ -178,7 +203,7 @@ const gameController = (()=>{
         }
 
  
-        _name.addEventListener('change',()=>{
+        _name.addEventListener('change',()=>{ //on Name change
             _playerName = _name.value;
 
             console.log('TEST'); //testing
@@ -192,31 +217,15 @@ const gameController = (()=>{
             };
         })
 
-        function _createBox(name, token){
-            //create box that shows on the right side of the window with the name and symbol
-            const right = document.querySelector('.right');
-            const box = document.createElement("div");
-            const text = document.createElement("p");
-            const symbol = document.createElement('p');
 
-            symbol.classList.add('symbol');
-            text.textContent = name;
-            symbol.textContent = token;
-
-            box.appendChild(text);
-            box.appendChild(symbol);
-            right.appendChild(box);
-              
-
-        }
-        _tokenGrid.addEventListener('click',(e)=>{
+        _tokenGrid.addEventListener('click',(e)=>{ //on click Grid for selecting tokens
             let _playerToken = e.target.textContent;
             if (_old !== null) _old.classList.toggle('stuck');
             e.target.classList.toggle('stuck');
             _old = e.target;
             _token = e.target.textContent;
         })
-        _next.addEventListener('click', (e)=>{
+        _next.addEventListener('click', (e)=>{ // on clicking next
 
             if (_playerName === "" || _token === null){
                 _next.classList.toggle('shake');
@@ -229,7 +238,10 @@ const gameController = (()=>{
                 _createBox(_playerName,_token);
                 if (players.length < maxPlayers) _rePlayerCreate();
                  else {_playerScreen.classList.toggle('show');
-                _mainScreen.classList.toggle('show');};
+                _mainScreen.classList.toggle('show');
+                startGame();
+                    }
+  
 
             }
         })
@@ -261,20 +273,20 @@ const gameController = (()=>{
 
 // const Testing() {} ------------------
 
-let player1 = createPlayer('bob','X');
-let player2 = createPlayer('greg','O');
+// let player1 = createPlayer('bob','X');
+// let player2 = createPlayer('greg','O');
 
-gameBoard.resetBoard();
-gameBoard.addSymbol(0,0,player1.getSymbol());
+// gameBoard.resetBoard();
+// gameBoard.addSymbol(0,0,player1.getSymbol());
 
-gameBoard.addSymbol(1,1,player1.getSymbol());
+// gameBoard.addSymbol(1,1,player1.getSymbol());
 
-gameBoard.addSymbol(2,2,player1.getSymbol());
+// gameBoard.addSymbol(2,2,player1.getSymbol());
 
 
-gameBoard.checkWin(player1);
-gameBoard.viewGameBoard();
-player1.symbol = 'y';
-console.log(player1.getSymbol()); //Expect return 'X'
+// gameBoard.checkWin(player1);
+// gameBoard.viewGameBoard();
+// player1.symbol = 'y';
+// console.log(player1.getSymbol()); //Expect return 'X'
 
 gameController.init();
