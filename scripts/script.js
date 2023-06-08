@@ -228,12 +228,15 @@ const gameController = (()=>{
 
                 _createBox(_playerName,_token);
                 if (players.length < maxPlayers) _rePlayerCreate();
+                 else {_playerScreen.classList.toggle('show');
+                _mainScreen.classList.toggle('show');};
+
             }
         })
     }
 
-    function _ai(){
-        console.log( 'AI');
+    function _ai(){ //WIP
+        console.log( 'AI'); // WIP
     }
     function init(){
 
