@@ -41,21 +41,24 @@ const gameBoard = (function() {
         return _turn;
     }
     function addSymbol(i,j, symbol){
-        _gameboard[j][i] = `${symbol}`;
+        _gameboard[j][i] = symbol;
     };
+    function removeSymbol(i,j){
+        _gameboard[j][i] = "";
+    }
 
     function viewGameBoard(){
         console.log(_gameboard);
     };
 
-    function checkWin(player){ //Obj
+    function checkWin(player,boolMinMax){ //Obj
 
         const isSymbol = (char) => char === player.getSymbol();
 
         //check rows
         for (let j = 0; j < _gameboard.length; j++){
             if (_gameboard[j].every(isSymbol)) {
-                gameController.results(`${player.getName()} has won this round; Row ${j+1}`);
+                if (!boolMinMax) gameController.results(`${player.getName()} has won this round; Row ${j+1}`);
                 return true;
             }
         }
@@ -66,7 +69,7 @@ const gameBoard = (function() {
 
         for (let i = 0; i < _gameboard.length; i++){
             if (_extractColumn(_gameboard,i).every(isSymbol)) {
-                gameController.results(`${player.getName()} has won this round; Column ${i+1}`);
+                if (!boolMinMax) gameController.results(`${player.getName()} has won this round; Column ${i+1}`);
                 return true;
             }
         }
@@ -74,26 +77,33 @@ const gameBoard = (function() {
         let _diagDown = [_gameboard[0][0],_gameboard[1][1],_gameboard[2][2]];
         let _diagUp = [_gameboard[2][0],_gameboard[1][1],_gameboard[0][2]];
         if (_diagDown.every(isSymbol)) {
-            gameController.results(`${player.getName()} has won this round; Diagonally Down`);
+            if (!boolMinMax) gameController.results(`${player.getName()} has won this round; Diagonally Down`);
             return true;
         }
         if (_diagUp.every(isSymbol)) {
-            gameController.results(`${player.getName()} has won this round; Diagonally Up`);
+            if (!boolMinMax) gameController.results(`${player.getName()} has won this round; Diagonally Up`);
             return true;
         }
 
-        if (_turn >= 10) gameController.results(`It's a Draw`);
+        if (isBoardFull()) if (!boolMinMax) gameController.results(`It's a Draw`);
 
         return false;
         //console.log(_diagDown,_diagUp); testing
     }
 
     // input return coordinates in an array and the player who won else return null
-    function displayWin(){
+    
+    function isBoardFull(){
+        for (let i = 0; i < 3; i++){
+            for (let j = 0; j < 3; j++){
+                if (_gameboard[j][i] === '') return false;
+            }
+        }
+        return true; 
 
+        // return (turnNo >= 10);
     }
- 
-   return {viewGameBoard, addSymbol,resetBoard, checkWin, newTurn, turnNo};
+   return {viewGameBoard, addSymbol, removeSymbol, resetBoard, checkWin, newTurn, turnNo, isBoardFull};
 })();
 
 
@@ -122,7 +132,7 @@ const gameController = (()=>{
             };
             render(e.target.id.toString());
             
-            if (gameBoard.checkWin(_whoseTurnIsIt())){}
+            if (gameBoard.checkWin(_whoseTurnIsIt(),false)){}
             else { 
                 gameBoard.newTurn();
                 if (ai) _ai();
@@ -136,6 +146,8 @@ const gameController = (()=>{
 
         console.log( 'AI'); // WIP
 
+        let playerSymbol = players[0].getSymbol();
+        let aiSymbol = players[1].getSymbol();
 
         function _randomLegalSquare(){
         
@@ -161,10 +173,114 @@ const gameController = (()=>{
             render(`g${i}${j}`);
         }
 
+        function _evaluateScore() {
+            if (gameBoard.checkWin(aiSymbol,true)) {
+              return 1;
+            } else if (gameBoard.checkWin(playerSymbol,true)) {
+              return -1;
+            } else {
+              return 0;
+            }
+          }
 
-        _randomLegalSquare();
+        function _isGameOver(){
+            return (gameBoard.checkWin(players[0].getSymbol(), true) || gameBoard.checkWin(players[1].getSymbol(), true) || gameBoard.isBoardFull()); 
+        }
+        function _getAvailableMoves(){
+            let newArray = [];
+
+            // return array of i jumn
+        }
+        function _findBestMove() {
+            let bestScore = Infinity;
+            let bestMove;
+            let currentPlayer = players[1];
+            _getAvailableMoves().forEach((move) => {
+              const [i, j] = move;
+        
+              // Make the move
+              gameBoard.addSymbol(i,j,currentPlayer.symbol());
+            
+              // Switch player
+              currentPlayer = (currentPlayer === players[1]) ? players[0] : players[1];
+        
+              // Recursive minimax call
+              const score = this.minimax(0, false);
+        
+              // Undo the move
+              gameBoard.addSymbol(i,j,'');
+        
+              // Update the best move
+              if (score > bestScore) {
+                bestScore = score;
+                bestMove = [i, j];
+              }
+            });
+        
+            return bestMove;
+        }
+
+        function minimax(depth, isMaximizing) {
+            if (_isGameOver()) {
+              return _evaluateScore();
+            }
+        
+            if (isMaximizing) {
+              let _bestScore = Infinity;
+        
+              _getAvailableMoves().forEach((move) => {
+                const [i, j] = move;
+        
+              // Make the move
+                gameBoard.addSymbol(i,j,currentPlayer.symbol());
+        
+              // Switch player
+              currentPlayer = (currentPlayer === players[1]) ? players[0] : players[1];
+        
+                // Recursive minimax call
+                const score = this.minimax(depth + 1, false);
+        
+              // Undo the move
+              gameBoard.addSymbol(i,j,'');
+        
+                // Update the best score
+                _bestScore = Math.max(score, _bestScore);
+              });
+        
+              return _bestScore;
+            } else {
+              let _bestScore = -Infinity;
+        
+              this.getAvailableMoves().forEach((move) => {
+                const [i, j] = move;
+        
+                // Make the move
+                gameBoard.addSymbol(i,j,currentPlayer.symbol());
+        
+                // Switch player
+                currentPlayer = (currentPlayer === players[1]) ? players[0] : players[1];
+        
+                // Recursive minimax call
+                const score = this.minimax(depth + 1, false);
+        
+                // Undo the move
+                gameBoard.addSymbol(i,j,'');
+        
+                // Update the best score
+                _bestScore = Math.min(score, _bestScore);
+              });
+        
+              return _bestScore;
+            }
+          }
+
+        const [i, j] = _findBestMove();
+        console.log(`Best move: i=${i}, j=${j}`);
+        
+
+        // _randomLegalSquare();
         gameBoard.newTurn();
-        gameBoard.checkWin(players[1]);
+        gameBoard.checkWin(players[1],false);
     }    
 
     function results(string){
@@ -371,20 +487,32 @@ const gameController = (()=>{
 
 // const Testing() {} ------------------
 
-// let player1 = createPlayer('bob','X');
-// let player2 = createPlayer('greg','O');
+let player1 = createPlayer('bob','X');
+let player2 = createPlayer('greg','O');
+let playdelete  = createPlayer('del','');
 
-// gameBoard.resetBoard();
-// gameBoard.addSymbol(0,0,player1.getSymbol());
+gameBoard.viewGameBoard();
+gameBoard.resetBoard();
 
-// gameBoard.addSymbol(1,1,player1.getSymbol());
+gameBoard.viewGameBoard();
+gameBoard.removeSymbol(0,0);
 
-// gameBoard.addSymbol(2,2,player1.getSymbol());
+console.log(gameBoard.isBoardFull());
 
+for (let i = 0; i < 3 ; i++){
+    for (let j = 0; j< 3 ; j++){
+        gameBoard.addSymbol(i,j,player1.getSymbol());
+    }
+}
+
+gameBoard.viewGameBoard();
 
 // gameBoard.checkWin(player1);
 // gameBoard.viewGameBoard();
 // player1.symbol = 'y';
 // console.log(player1.getSymbol()); //Expect return 'X'
+
+
+console.log(gameBoard.isBoardFull()); //tag
 
 gameController.init();
