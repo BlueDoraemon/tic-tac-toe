@@ -50,7 +50,9 @@ const gameBoard = (function() {
     function viewGameBoard(){
         console.log(_gameboard);
     };
-
+    function checkGrid(i,j){
+        return _gameboard[j][i];
+    }
     function checkWin(player,boolMinMax){ //Obj
 
         const isSymbol = (char) => char === player.getSymbol();
@@ -64,7 +66,11 @@ const gameBoard = (function() {
         }
         //check columns
         function _extractColumn(_arr, _column){
-        return _arr.map((x)=>x[_column]);
+            let _newColumn = [];
+            for (let row = 0; row < _arr.length; row++){
+                _newColumn.push(_arr[row][_column]);
+            }
+        return _newColumn;
         }
 
         for (let i = 0; i < _gameboard.length; i++){
@@ -103,7 +109,7 @@ const gameBoard = (function() {
 
         // return (turnNo >= 10);
     }
-   return {viewGameBoard, addSymbol, removeSymbol, resetBoard, checkWin, newTurn, turnNo, isBoardFull};
+   return {viewGameBoard, checkGrid, addSymbol, removeSymbol, resetBoard, checkWin, newTurn, turnNo, isBoardFull};
 })();
 
 
@@ -146,8 +152,8 @@ const gameController = (()=>{
 
         console.log( 'AI'); // WIP
 
-        let playerSymbol = players[0].getSymbol();
-        let aiSymbol = players[1].getSymbol();
+        const aiPlayer = players[1];
+        const humanPlayer = players[0];
 
         function _randomLegalSquare(){
         
@@ -174,111 +180,88 @@ const gameController = (()=>{
         }
 
         function _evaluateScore() {
-            if (gameBoard.checkWin(aiSymbol,true)) {
+            if (gameBoard.checkWin(aiPlayer,true)) {
               return 1;
-            } else if (gameBoard.checkWin(playerSymbol,true)) {
+            } else if (gameBoard.checkWin(humanPlayer,true)) {
               return -1;
             } else {
-              return 0;
+              return 0.5;
             }
           }
 
         function _isGameOver(){
-            return (gameBoard.checkWin(players[0].getSymbol(), true) || gameBoard.checkWin(players[1].getSymbol(), true) || gameBoard.isBoardFull()); 
+            return (gameBoard.checkWin(humanPlayer, true) || gameBoard.checkWin(aiPlayer, true) || gameBoard.isBoardFull()); 
         }
-        function _getAvailableMoves(){
-            let newArray = [];
 
-            // return array of i jumn
-        }
         function _findBestMove() {
-            let bestScore = Infinity;
+            let bestScore = -Infinity;
             let bestMove;
-            let currentPlayer = players[1];
-            _getAvailableMoves().forEach((move) => {
-              const [i, j] = move;
-        
-              // Make the move
-              gameBoard.addSymbol(i,j,currentPlayer.symbol());
+
+            function minimax(depth, isMaximizing) {
+                
+                if (_isGameOver()) {
+                  return _evaluateScore();
+                }
             
-              // Switch player
-              currentPlayer = (currentPlayer === players[1]) ? players[0] : players[1];
-        
-              // Recursive minimax call
-              const score = this.minimax(0, false);
-        
-              // Undo the move
-              gameBoard.addSymbol(i,j,'');
-        
-              // Update the best move
-              if (score > bestScore) {
-                bestScore = score;
-                bestMove = [i, j];
-              }
-            });
+                if (isMaximizing) {
+                    let maxEval = -Infinity;
+                    for (let i = 0; i < 3; i++){
+                        for (let j = 0; j < 3; j++){
+                            if (gameBoard.checkGrid(i,j) === '') {
+                                gameBoard.addSymbol(i,j,aiPlayer.getSymbol());
+                                const _eval = minimax(depth-1,false);
+                                gameBoard.removeSymbol(i,j);
+                                maxEval = Math.max(maxEval, _eval)
+                            }
+                        }
+                    }
+                
+                    return maxEval;
+                } else {
+                    let minEval = Infinity;
+                    for (let i = 0; i < 3; i++){
+                        for (let j = 0; j < 3; j++){
+                            if (gameBoard.checkGrid(i,j) === '') {
+                                gameBoard.addSymbol(i,j,humanPlayer.getSymbol());
+                                const _eval = minimax(depth-1,false);
+                                gameBoard.removeSymbol(i,j);
+                                minEval = Math.min(minEval, _eval)
+                            }
+                        }
+                    }
+                
+                    return minEval;
+                }
+            }
+            
+
+            //run
+            for (let i = 0; i < 3; i++){
+                for (let j = 0; j < 3; j++){
+                    if (gameBoard.checkGrid(i,j) === '') {
+                        gameBoard.addSymbol(i,j,aiPlayer.getSymbol());
+                        const score = minimax(9,false);
+                        gameBoard.removeSymbol(i,j);
+                        if (score > bestScore) {
+                            bestScore = score;
+                            bestMove = {i,j};
+                        }
+                    }
+                }
+            }
         
             return bestMove;
         }
 
-        function minimax(depth, isMaximizing) {
-            if (_isGameOver()) {
-              return _evaluateScore();
-            }
-        
-            if (isMaximizing) {
-              let _bestScore = Infinity;
-        
-              _getAvailableMoves().forEach((move) => {
-                const [i, j] = move;
-        
-              // Make the move
-                gameBoard.addSymbol(i,j,currentPlayer.symbol());
-        
-              // Switch player
-              currentPlayer = (currentPlayer === players[1]) ? players[0] : players[1];
-        
-                // Recursive minimax call
-                const score = this.minimax(depth + 1, false);
-        
-              // Undo the move
-              gameBoard.addSymbol(i,j,'');
-        
-                // Update the best score
-                _bestScore = Math.max(score, _bestScore);
-              });
-        
-              return _bestScore;
-            } else {
-              let _bestScore = -Infinity;
-        
-              this.getAvailableMoves().forEach((move) => {
-                const [i, j] = move;
-        
-                // Make the move
-                gameBoard.addSymbol(i,j,currentPlayer.symbol());
-        
-                // Switch player
-                currentPlayer = (currentPlayer === players[1]) ? players[0] : players[1];
-        
-                // Recursive minimax call
-                const score = this.minimax(depth + 1, false);
-        
-                // Undo the move
-                gameBoard.addSymbol(i,j,'');
-        
-                // Update the best score
-                _bestScore = Math.min(score, _bestScore);
-              });
-        
-              return _bestScore;
-            }
-          }
 
-        const [i, j] = _findBestMove();
-        console.log(`Best move: i=${i}, j=${j}`);
+        let bestMove = _findBestMove();
+
+        console.log(`Best move: i=${bestMove.i}, j=${bestMove.j}`);
         
 
-        // _randomLegalSquare();
+        // _randomLegalSquare(); <--- easy ai
+
+        render(`g${bestMove.i}${bestMove.j}`);
         gameBoard.newTurn();
         gameBoard.checkWin(players[1],false);
     }    
@@ -507,12 +490,37 @@ for (let i = 0; i < 3 ; i++){
 
 gameBoard.viewGameBoard();
 
+gameBoard.removeSymbol(1,2);
+gameBoard.checkGrid(1,2);
+
+        function getAvailableMoves(){
+            let newArray = [];
+            let i;
+            let j;
+
+            for (let index = 0; index < 3; index++) {
+                for (let index2 = 0; index2 < 3; index2++) {
+                    if (gameBoard.checkGrid(index,index2)===''){
+                        j = index;
+                        i = index2;
+                    }
+                    
+                }
+                
+            }
+            newArray.push([i,j]);
+
+            return newArray; //tag
+
+            // return array of i jumn
+        }
+console.log(getAvailableMoves());
 // gameBoard.checkWin(player1);
 // gameBoard.viewGameBoard();
 // player1.symbol = 'y';
 // console.log(player1.getSymbol()); //Expect return 'X'
 
 
-console.log(gameBoard.isBoardFull()); //tag
+console.log(gameBoard.isBoardFull());
 
 gameController.init();
