@@ -24,6 +24,7 @@ function createPlayer(name,symbol){
 //gameBoard Module
 const gameBoard = (function() {
     let _gameboard = [];
+    let _turn = 1;
     //2D Array at the moment
 
     function resetBoard(){
@@ -31,8 +32,14 @@ const gameBoard = (function() {
             ['','',''],
             ['','',''],
             ['','','']];
+        _turn = 1;
     };
-
+    function newTurn(){
+        _turn++;
+    }
+    function turnNo(){
+        return _turn;
+    }
     function addSymbol(i,j, symbol){
         _gameboard[j][i] = `${symbol}`;
     };
@@ -74,6 +81,9 @@ const gameBoard = (function() {
             gameController.results(`${player.getName()} has won this round; diagDown`);
             return true;
         }
+
+        if (_turn >= 10) gameController.results(`It's a Draw`);
+
         return false;
         //console.log(_diagDown,_diagUp); testing
     }
@@ -83,7 +93,7 @@ const gameBoard = (function() {
 
     }
  
-   return {viewGameBoard, addSymbol,resetBoard, checkWin};
+   return {viewGameBoard, addSymbol,resetBoard, checkWin, newTurn, turnNo};
 })();
 
 
@@ -95,7 +105,6 @@ const gameController = (()=>{
     const _playerScreen = document.querySelector('.playerCreate');
     const _mainScreen = document.querySelector('main');
     const _result = document.querySelector('.results');
-    let _turn = 1;
     let players = [];
 
 
@@ -115,9 +124,8 @@ const gameController = (()=>{
             
             if (gameBoard.checkWin(_whoseTurnIsIt())){}
             else { 
-                _turn++;
-                (_turn >= 10) && gameController.results(`It's a Draw`);
-                (ai) && _ai();
+                gameBoard.newTurn();
+                if (ai) _ai();
             }
             _scale();
 
@@ -136,9 +144,8 @@ const gameController = (()=>{
             let i = 0;
                 
             function _checkIfOccupied(i,j){
-                const _check = document.querySelector(`#g`+i+j);
-                if (_check !== '') return true;
-                else return false;
+                const _check = document.querySelector("#g"+i+j);
+                return (_check.textContent !== '');
             }
             
             function _generateRandomNum(){
@@ -151,13 +158,13 @@ const gameController = (()=>{
                 j = _generateRandomNum();
                 _occupied = _checkIfOccupied(i,j);
             }
-
-            render(`b${i}${j}`);
+            render(`g${i}${j}`);
         }
 
 
         _randomLegalSquare();
-        _turn++;
+        gameBoard.newTurn();;
+        // checkWin(player[1]);
     }    
 
     function results(string){
@@ -185,8 +192,6 @@ const gameController = (()=>{
         allBoxes.forEach((e)=>{
             right.removeChild(e);
         })
-
-        _turn = 1;
         players = [];
     }
 
@@ -196,14 +201,13 @@ const gameController = (()=>{
         grid.forEach((e)=>{
             e.textContent = "";
         })
-        _turn = 1;
         _scale();
 
     }
     function _scale(){
         const player1 = document.querySelector('#box1');
         const player2 = document.querySelector("#box2");
-        if (_turn === 1){
+        if (gameBoard.turnNo() === 1){
             const right = document.querySelectorAll('.scale');
             right.forEach((element)=>{
                 element.classList.toggle('scale');
@@ -215,7 +219,7 @@ const gameController = (()=>{
         }
     }
     function _whoseTurnIsIt(){
-        return (_turn % 2 === 0 ) ? players[1] : players[0];
+        return (gameBoard.turnNo() % 2 === 0 ) ? players[1] : players[0];
     }
 
 
