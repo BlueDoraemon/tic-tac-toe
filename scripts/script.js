@@ -106,13 +106,13 @@ const gameController = (()=>{
         _reset();
 
         const _grid = document.querySelector('.board');
-
         _grid.addEventListener('click',(e)=>{
             if (e.target.textContent !== '')  {
                 e.target.classList.toggle('shake');
-                return;
+                return; // cancel click
             };
             render(e.target.id.toString());
+            
             if (gameBoard.checkWin(_whoseTurnIsIt())){}
             else { 
                 _turn++;
@@ -128,17 +128,35 @@ const gameController = (()=>{
 
         console.log( 'AI'); // WIP
 
-        //randomy choose a square
-        let j = 0;
-        let i = 0;
 
-        function _generateRandomNum(){
-            return Math.round(Math.random() * 2);
+        function _randomLegalSquare(){
+        
+            //randomly choose a square
+            let j = 0;
+            let i = 0;
+                
+            function _checkIfOccupied(i,j){
+                const _check = document.querySelector(`#g`+i+j);
+                if (_check !== '') return true;
+                else return false;
+            }
+            
+            function _generateRandomNum(){
+                return Math.round(Math.random() * 2);
+            }
+            
+            let _occupied = true;
+            while (_occupied === true) {
+                i = _generateRandomNum();
+                j = _generateRandomNum();
+                _occupied = _checkIfOccupied(i,j);
+            }
+
+            render(`b${i}${j}`);
         }
-        i = _generateRandomNum();
-        j = _generateRandomNum();
 
-        render(`b${i}${j}`);
+
+        _randomLegalSquare();
         _turn++;
     }    
 
@@ -239,7 +257,7 @@ const gameController = (()=>{
         }
 
         function _createPlayer(name, token){
-            players.push(createPlayer(_playerName, _token));
+            players.push(createPlayer(name, token));
 
             //create box that shows on the right side of the window with the name and symbol
             const right = document.querySelector('.right');
@@ -315,7 +333,7 @@ const gameController = (()=>{
                     if (players.length < maxPlayers) _rePlayerCreate();
                      else {_playerScreen.classList.toggle('show');
                     _mainScreen.classList.toggle('show');
-                    ai && _createPlayer('AI', '💻'); // run on truthy
+                    if (ai) _createPlayer('AI', '💻'); // run on truthy
                     startGame(ai);
                      _next.removeEventListener('click',_nextF)
                         }
