@@ -55,7 +55,7 @@ const gameBoard = (function() {
         //check rows
         for (let j = 0; j < _gameboard.length; j++){
             if (_gameboard[j].every(isSymbol)) {
-                gameController.results(`${player.getName()} has won this round; j = ${j}`);
+                gameController.results(`${player.getName()} has won this round; Row ${j+1}`);
                 return true;
             }
         }
@@ -66,7 +66,7 @@ const gameBoard = (function() {
 
         for (let i = 0; i < _gameboard.length; i++){
             if (_extractColumn(_gameboard,i).every(isSymbol)) {
-                gameController.results(`${player.getName()} has won this round; i = ${i}`);
+                gameController.results(`${player.getName()} has won this round; Column ${i+1}`);
                 return true;
             }
         }
@@ -74,11 +74,11 @@ const gameBoard = (function() {
         let _diagDown = [_gameboard[0][0],_gameboard[1][1],_gameboard[2][2]];
         let _diagUp = [_gameboard[2][0],_gameboard[1][1],_gameboard[0][2]];
         if (_diagDown.every(isSymbol)) {
-            gameController.results(`${player.getName()} has won this round; /`);
+            gameController.results(`${player.getName()} has won this round; Diagonally Down`);
             return true;
         }
         if (_diagUp.every(isSymbol)) {
-            gameController.results(`${player.getName()} has won this round; diagDown`);
+            gameController.results(`${player.getName()} has won this round; Diagonally Up`);
             return true;
         }
 
@@ -163,8 +163,8 @@ const gameController = (()=>{
 
 
         _randomLegalSquare();
-        gameBoard.newTurn();;
-        // checkWin(player[1]);
+        gameBoard.newTurn();
+        gameBoard.checkWin(players[1]);
     }    
 
     function results(string){
