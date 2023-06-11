@@ -181,11 +181,11 @@ const gameController = (()=>{
 
         function _evaluateScore() {
             if (gameBoard.checkWin(aiPlayer,true)) {
-              return 1;
+              return 10;
             } else if (gameBoard.checkWin(humanPlayer,true)) {
-              return -1;
+              return -10;
             } else {
-              return 0.5;
+              return 0;
             }
           }
 
@@ -223,7 +223,7 @@ const gameController = (()=>{
                         for (let j = 0; j < 3; j++){
                             if (gameBoard.checkGrid(i,j) === '') {
                                 gameBoard.addSymbol(i,j,humanPlayer.getSymbol());
-                                const _eval = minimax(depth-1,false);
+                                const _eval = minimax(depth-1,true);
                                 gameBoard.removeSymbol(i,j);
                                 minEval = Math.min(minEval, _eval)
                             }
@@ -240,7 +240,7 @@ const gameController = (()=>{
                 for (let j = 0; j < 3; j++){
                     if (gameBoard.checkGrid(i,j) === '') {
                         gameBoard.addSymbol(i,j,aiPlayer.getSymbol());
-                        const score = minimax(9,false);
+                        const score = minimax(10,false);
                         gameBoard.removeSymbol(i,j);
                         if (score > bestScore) {
                             bestScore = score;
@@ -261,7 +261,7 @@ const gameController = (()=>{
 
         // _randomLegalSquare(); <--- easy ai
 
-        render(`g${bestMove.i}${bestMove.j}`);
+        render(`g${bestMove.j}${bestMove.i}`);
         gameBoard.newTurn();
         gameBoard.checkWin(players[1],false);
     }    
