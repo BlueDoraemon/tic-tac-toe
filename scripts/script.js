@@ -196,8 +196,9 @@ const gameController = (()=>{
         function _findBestMove() {
             let bestScore = -Infinity;
             let bestMove;
+            if (_isGameOver()) return;
 
-            function minimax(depth, isMaximizing) {
+            function minimax(depth, alpha, beta, isMaximizing) {
                 
                 if (_isGameOver()) {
                   return _evaluateScore();
@@ -209,27 +210,30 @@ const gameController = (()=>{
                         for (let j = 0; j < 3; j++){
                             if (gameBoard.checkGrid(i,j) === '') {
                                 gameBoard.addSymbol(i,j,aiPlayer.getSymbol());
-                                const _eval = minimax(depth-1,false);
-                                gameBoard.removeSymbol(i,j);
-                                maxEval = Math.max(maxEval, _eval)
+                                const _eval = minimax(depth - 1, alpha, beta, false);
+                                gameBoard.removeSymbol(i, j);
+                                maxEval = Math.max(maxEval, _eval);
+                                alpha = Math.max(alpha, _eval);
+                                if (beta <= alpha) break;
                             }
                         }
                     }
-                
                     return maxEval;
+            
                 } else {
                     let minEval = Infinity;
                     for (let i = 0; i < 3; i++){
                         for (let j = 0; j < 3; j++){
                             if (gameBoard.checkGrid(i,j) === '') {
                                 gameBoard.addSymbol(i,j,humanPlayer.getSymbol());
-                                const _eval = minimax(depth-1,true);
-                                gameBoard.removeSymbol(i,j);
-                                minEval = Math.min(minEval, _eval)
+                                const _eval = minimax(depth - 1, alpha, beta, true);
+                                gameBoard.removeSymbol(i, j);
+                                minEval = Math.min(minEval, _eval);
+                                beta = Math.min(beta, _eval);
+                                if (beta <= alpha) break;
                             }
                         }
                     }
-                
                     return minEval;
                 }
             }
@@ -240,30 +244,36 @@ const gameController = (()=>{
                 for (let j = 0; j < 3; j++){
                     if (gameBoard.checkGrid(i,j) === '') {
                         gameBoard.addSymbol(i,j,aiPlayer.getSymbol());
-                        const score = minimax(10,false);
+                        const score = minimax(9, -Infinity, Infinity, false);
                         gameBoard.removeSymbol(i,j);
                         if (score > bestScore) {
                             bestScore = score;
-                            bestMove = {i,j};
+                            bestMove = [i,j];
                         }
                     }
                 }
             }
         
             return bestMove;
+            
+
         }
 
+        if (!(_isGameOver())){
+            let [best_i,best_j] = _findBestMove();
 
-        let bestMove = _findBestMove();
+            console.log(`Best move: i=${best_i}, j=${best_j}`);
+            
 
-        console.log(`Best move: i=${bestMove.i}, j=${bestMove.j}`);
+            // _randomLegalSquare(); <--- easy ai
+
+            render(`g${best_j}${best_i}`);
+            gameBoard.newTurn();
+            gameBoard.checkWin(players[1],false); 
+        }
         
 
-        // _randomLegalSquare(); <--- easy ai
-
-        render(`g${bestMove.j}${bestMove.i}`);
-        gameBoard.newTurn();
-        gameBoard.checkWin(players[1],false);
+        
     }    
 
     function results(string){
