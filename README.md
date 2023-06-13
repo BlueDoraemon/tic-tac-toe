@@ -53,5 +53,3 @@ The `gameController` module is also an IIFE responsible for controlling the flow
 - `tryAgain()`: Restarts the game after a result is shown.
 - `home()`: Goes back to the home screen.
 - `init()`: Initializes the game by adding event listeners and setting up the initial UI.
-
-Please note that the code provided is not complete and may require additional implementation to fully function.
