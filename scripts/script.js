@@ -118,6 +118,7 @@ const gameBoard = (function() {
 const gameController = (()=>{
 
     const _loginScreen = document.querySelector('.login');
+    const _header = document.querySelector('.header');
     const _playerScreen = document.querySelector('.playerCreate');
     const _mainScreen = document.querySelector('main');
     const _result = document.querySelector('.results');
@@ -129,7 +130,7 @@ const gameController = (()=>{
      //best of 5?
 
         _reset();
-
+            
         const _grid = document.querySelector('.board');
         _grid.addEventListener('click',(e)=>{
             if (e.target.textContent !== '')  {
@@ -141,7 +142,7 @@ const gameController = (()=>{
             if (gameBoard.checkWin(_whoseTurnIsIt(),false)){}
             else { 
                 gameBoard.newTurn();
-                if (ai) _ai();
+                if(ai) _ai();
             }
             _scale();
 
@@ -293,6 +294,7 @@ const gameController = (()=>{
     function home(){
         _result.classList.toggle('show');
         _mainScreen.classList.toggle('show');
+        _header.classList.toggle('show');
         _loginScreen.classList.toggle('show'); 
 
         //remove all box elements
@@ -463,17 +465,20 @@ const gameController = (()=>{
             e.stopPropagation();
             _loginScreen.classList.toggle('show');
             _playerScreen.classList.toggle('show');
+            _header.classList.toggle('show');
         }
-        _loginScreen.addEventListener('click', (e)=>{
-            // console.log(e.target);
-            if (e.target.classList.contains("pl")){
-                _hideLogin(e);
-                _playerUI(2,false);
-            } else if (e.target.classList.contains("ai"))  {
-                _hideLogin(e);
-                _playerUI(1,true);
-            }   
-        })
+        function _loginButton(e) {
+            if (e.target.classList.contains("pl")) {
+              _playerUI(2, false);
+            } else if (e.target.classList.contains("ai")) {
+              _playerUI(1, true);
+
+            }
+            _hideLogin(e);
+        }
+        
+        _loginScreen.addEventListener('click', _loginButton);
+        
     }
     return {init, startGame, results, home, tryAgain};
 })();
@@ -533,4 +538,6 @@ console.log(getAvailableMoves());
 
 console.log(gameBoard.isBoardFull());
 
+
+///INIT
 gameController.init();

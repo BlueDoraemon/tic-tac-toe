@@ -6,10 +6,46 @@ body{
 margin:0;
 padding:0;
 position: relative;
+height: 100vh;
+min-height: 500px;
 }
 
 .wrap{
     display:flex;
+}
+
+.header{
+    display:none;
+    margin-top: 2rem;
+    font-size: 3rem;
+    font-weight: 700;
+    text-align: center;
+    justify-content: center;
+}
+.left{
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+    gap:5rem;
+    margin-left:5vw;
+}
+footer{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    margin-top:auto;
+    margin-bottom: 1rem;
+    position: absolute;
+    width: 100%;
+    gap: 2rem;
+}
+
+footer img{
+    height:3rem;
+}
+footer img:hover{
+    transform: scale(1.2) rotate(360deg);
 }
 
 /* 
@@ -23,9 +59,10 @@ position: relative;
     justify-content: center;
     align-items: center;
     gap:5vh;
-    height: 100%;
+    height: max-content;
     width:100%;
-    margin: 100px;
+    min-width: max-content;
+    margin-top: 100px;
 }
 .title{
     display:grid;
@@ -87,14 +124,15 @@ position: relative;
 }
 .right > *{
     border: 4px solid black;
-    width: 150px;
+    width: 125px;
     display:grid;
     justify-items: center;
     font-size:1.2rem;
     font-weight: 800;
-    height: 150px;
+    height: 125px;
     gap:10px;
     padding:2vw;
+    background-color: white;
 
 }
 .right .symbol{
@@ -103,6 +141,24 @@ position: relative;
     font-weight:1000;
 }
 
+/* CSS PATTERN by css-pattern.com */
+
+html {
+    --s: 100px; /* control the size */
+    --c1: white;
+    --c2: rgb(200, 198, 198);
+    
+    --_g:#0000, #0004 5%,
+       var(--c2) 6%  14%,var(--c1) 16% 24%,var(--c2) 26% 34%,var(--c1) 36% 44%,
+       var(--c2) 46% 54%,var(--c1) 56% 64%,var(--c2) 66% 74%,var(--c1) 76% 84%,
+       var(--c2) 86% 94%,#0004 95%,#0000;
+    background:
+      radial-gradient(100% 50% at 100% 0   ,var(--_g)),
+      radial-gradient(100% 50% at 0    50% ,var(--_g)),
+      radial-gradient(100% 50% at 100% 100%,var(--_g));
+    background-size: var(--s) calc(2*var(--s));
+  }
+  
 
 
   /* PLAYER CREATE --------------- */
@@ -113,7 +169,6 @@ position: relative;
     display:none;
     flex-direction: column;
     align-items: center;
-    margin:100px;
     gap:5vh;
     text-align: center;
 }
@@ -167,8 +222,6 @@ main{
     justify-content: center;
     align-items: center;
     background-color: var(--white);
-    margin-left: 200px;
-    margin-top:200px;
     
 }
 .board{
@@ -178,6 +231,7 @@ main{
 }
 .grid{
     border: 1px solid black;
+    background-color: white;
     display:flex;
     justify-content: center;
     align-items: center;
@@ -259,6 +313,6 @@ MISC---------------------------
     display:flex;
 }
 .scale{
-    transform: scale (1.1);
+    transform: scale(1.1);
     border:8px solid black;
 }
