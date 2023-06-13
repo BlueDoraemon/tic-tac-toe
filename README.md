@@ -1,5 +1,4 @@
-# tic-tac-toe
-Tic Tac Toe in browser
+# Tic Tac Toe in Browser
 ![Tic-Tac-Toe](images/tic-tac-toe.gif)
 
 
