@@ -14,7 +14,7 @@ Learning Outcomes
 
 --Unbeatable AI using Minimax algorithm and alpha beta pruning
 
--- Mobile responsive design
+-- Mobile responsive design WIP
 
 
 
