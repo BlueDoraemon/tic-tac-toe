@@ -122,33 +122,37 @@ const gameController = (()=>{
     const _playerScreen = document.querySelector('.playerCreate');
     const _mainScreen = document.querySelector('main');
     const _result = document.querySelector('.results');
+    const _grid = document.querySelector('.board');
     let players = [];
-
+    let _aiPlay = false;
 
     function startGame(ai){ // (T or F)
         //init
      //best of 5?
 
         _reset();
-            
-        const _grid = document.querySelector('.board');
-        _grid.addEventListener('click',(e)=>{
-            if (e.target.textContent !== '')  {
-                e.target.classList.toggle('shake');
-                return; // cancel click
-            };
-            render(e.target.id.toString());
-            
-            if (gameBoard.checkWin(_whoseTurnIsIt(),false)){}
-            else { 
-                gameBoard.newTurn();
-                if(ai) _ai();
-            }
-            _scale();
+        _aiPlay = ai;
+        console.log(`Ai outside = ${ai}`);
 
-        })
+
+        _grid.addEventListener('click',_handleClick);
     }
 
+    function _handleClick(e) {
+        if (e.target.textContent !== '') {
+            e.target.classList.toggle('shake');
+            return; // cancel click
+        }
+        render(e.target.id.toString());
+    
+        if (gameBoard.checkWin(_whoseTurnIsIt(), false)) {
+        } else {
+            gameBoard.newTurn();
+            if (_aiPlay) _ai();
+        }
+        _scale();
+    }
+    
     function _ai(){ //WIP
 
         console.log( 'AI'); // WIP
@@ -304,6 +308,8 @@ const gameController = (()=>{
             right.removeChild(e);
         })
         players = [];
+        _grid.removeEventListener('click',_handleClick);
+
     }
 
     function _reset(){
